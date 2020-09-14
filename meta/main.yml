@@ -1,0 +1,23 @@
+---
+galaxy_info:
+  author: zfuller
+  description: |
+    Installs [Hugo](https://gohugo.io/) framework from hugos [github](https://github.com/gohugoio/hugo)s [release page](https://github.com/gohugoio/hugo/releases)
+
+  license: GPL-3.0-only
+
+  min_ansible_version: 2.7
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+
+  galaxy_tags:
+    - hugo

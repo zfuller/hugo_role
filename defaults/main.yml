@@ -1,0 +1,15 @@
+---
+hugo_repo: https://github.com/gohugoio/hugo
+hugo_repo_latest_url: "{{ hugo_repo }}/releases/latest"
+
+hugo_force_install: false
+hugo_version:
+
+hugo_bit: "{{ ansible_userspace_bits }}bit"
+hugo_type: "{{ ansible_system }}-{{ hugo_bit }}"  # Linux-64bit
+hugo_format: tar.gz
+hugo_extended: no
+hugo_download: hugo{{ '_extended' if hugo_extended else '' }}_{{ hugo_version }}_{{ hugo_type }}.{{ hugo_format }}
+hugo_download_url: "{{ hugo_repo }}/releases/download/v{{ hugo_version }}/{{ hugo_download }}"
+hugo_remote_src: "yes"  # no
+hugo_bin_path: /usr/local/bin

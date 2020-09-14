@@ -1,0 +1,69 @@
+---
+- name: check for existing installation of hugo
+  stat:
+    path: "{{ hugo_bin_path }}/hugo"
+  register: hugo_prev_install
+
+- name: find current installed version
+  shell:
+    cmd: "{{ hugo_bin_path }}/hugo version | awk '{print $5}' | sed 's:-.*::' | sed 's/^v//'"
+  register: current_hugo_version
+  when: hugo_prev_install.stat.exists
+
+- name: set installed_hugo_version
+  set_fact:
+    installed_hugo_version: "{{ current_hugo_version.stdout }}"
+  when:
+    - hugo_prev_install.stat.exists
+    - current_hugo_version.stdout
+
+- name: find latest version
+  shell:
+    cmd: "curl -fsSLI -o /dev/null -w %{url_effective} {{ hugo_repo_latest_url }} | sed 's:.*/::' | sed 's/^v//'"
+    warn: false
+  register: latest_hugo_version
+  when:
+    - hugo_version is defined
+    - hugo_version != 'null'
+
+- name: set hugo_version
+  set_fact:
+    hugo_version: "{{ latest_hugo_version.stdout }}"
+  when:
+    - hugo_version is defined
+    - hugo_version != 'null'
+    - latest_hugo_version.stdout
+
+- name: fail if we have no hugo_version
+  fail:
+    msg: Unable to find a version of hugo to install.
+  when:
+    - hugo_version is not defined
+    - hugo_version == 'null'
+
+- name: Install
+  block:
+    - name: install hugo v{{ hugo_version }} (tar.gz)
+      unarchive:
+        src: "{{ hugo_download_url }}"
+        dest: "{{ hugo_bin_path }}"
+        remote_src: "{{ hugo_remote_src }}"
+        extra_opts: hugo
+      when:
+        - hugo_format == 'tar.gz'
+
+    - name: install hugo v{{ hugo_version }} (deb)
+      apt:
+        deb: "{{ hugo_download_url }}"
+      when:
+        - hugo_format == 'deb'
+  when:
+    - (installed_hugo_version|int != hugo_version|int) or
+      hugo_force_install|default(false)|bool
+
+- name:
+  debug:
+    msg: Found {{ installed_hugo_version }} currently installed. Target is {{ hugo_version }}. skipping install.
+  when:
+    - installed_hugo_version|int == hugo_version|int
+    - not hugo_force_install|default(false)|bool
