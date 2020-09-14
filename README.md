@@ -27,11 +27,6 @@ If you are running on `ARM` or `ARM64`, you'll want to set this variable as such
 hugo_bit:
 ```
 
-If you can install deb files and want to install hugo via the deb package you can set this to `deb`
-```yaml
-hugo_format: deb
-```
-
 Install hugo extended
 ```yaml
 hugo_extended: true

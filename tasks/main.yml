@@ -17,6 +17,12 @@
     - hugo_prev_install.stat.exists
     - current_hugo_version.stdout
 
+- name: set installed_hugo_version (existing install not found)
+  set_fact:
+    installed_hugo_version: -1
+  when:
+    - not hugo_prev_install or not hugo_prev_install.stat.exists
+
 - name: find latest version
   shell:
     cmd: "curl -fsSLI -o /dev/null -w %{url_effective} {{ hugo_repo_latest_url }} | sed 's:.*/::' | sed 's/^v//'"
@@ -49,14 +55,6 @@
         dest: "{{ hugo_bin_path }}"
         remote_src: "{{ hugo_remote_src }}"
         extra_opts: hugo
-      when:
-        - hugo_format == 'tar.gz'
-
-    - name: install hugo v{{ hugo_version }} (deb)
-      apt:
-        deb: "{{ hugo_download_url }}"
-      when:
-        - hugo_format == 'deb'
   when:
     - (installed_hugo_version|int != hugo_version|int) or
       hugo_force_install|default(false)|bool
