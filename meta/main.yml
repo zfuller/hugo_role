@@ -2,7 +2,7 @@
 galaxy_info:
   author: zfuller
   description: |
-    Installs [Hugo](https://gohugo.io/) framework from hugos [github](https://github.com/gohugoio/hugo)s [release page](https://github.com/gohugoio/hugo/releases)
+    Installs Hugo's framework from hugos githubs release page
 
   license: GPL-3.0-only
 
